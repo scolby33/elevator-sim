@@ -26,7 +26,7 @@ class Person(object):
     def incinerate(self):
         global people
         people.remove(self)
-        print("{}. Aaaaaa...".format(self))
+        print("{}. AAaaaa...".format(self))
     
     def tick(self):
         if self.state == State.queuing:
