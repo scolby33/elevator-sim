@@ -43,8 +43,8 @@ class Queue(object):
         self.rate = rate
     
     def __repr__(self):
-        return self.people
-        
+        return "L:{} P:{} R:{}".format(self.level, self.poisson, self.rate)
+    
     def tick(self, people, queues):
         if self.poisson == True:
             return people.update({Person(random.sample(queues).level, start = self.level) for x in range(0, poisson(rate))})
@@ -59,6 +59,9 @@ class Elevator(object):
     
     def __len__(self):
         return len(self.people)
+    
+    def __repr__(self):
+        return "L:{} C:{} H:{}".format(self.level, self.capacity, self.home)
     
     def add_person(self, person):
         if len(self) < self.capacity:
