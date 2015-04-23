@@ -2,6 +2,7 @@
 from enum import IntEnum
 from time import sleep
 import random
+from numpy.random import poisson
 
 class State(IntEnum):
     queuing = 1
@@ -35,13 +36,19 @@ class Person(object):
             self.ride_ticks += 1
         
 class Queue(object):
-    def __init__(self, level):
+    def __init__(self, level, poisson = False, rate = 0):
         self.level = level
         self.people = list()
+        self.poisson = poisson
+        self.rate = rate
     
     def __repr__(self):
         return self.people
         
+    def tick(self, people, queues):
+        if self.poisson == True:
+            return people.update({Person(random.sample(queues).level, start = self.level) for x in range(0, poisson(rate))})
+            
 class Elevator(object):
     def __init__(self, capacity, home = 0):
         self.level = home
