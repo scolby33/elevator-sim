@@ -106,7 +106,7 @@ def main():
             elif len(elevator.people) == 0 and elevator.level != 0:
                 elevator.direction = Direction.down
             else:
-                elevator.direction == Direction.stationary
+                elevator.direction = Direction.stationary
         
         tick()
             
