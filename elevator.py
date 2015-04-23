@@ -74,52 +74,32 @@ class Elevator(object):
         self.level += self.direction
         print(self.level)
         
-def tick():
-    global world_time
-    world_time += 1
-    for person in people:
-        person.tick()
-    for elevator in elevators:
-        elevator.tick()
-    sleep(0.5)
+class BuildingModel(object):
+    def __init__(self, floors, elevators):
+        self.queues = {Queue(*args) for args in floors}
+        self.elevators = {Elevator(*args) for args in elevators}
+        self.people = set()
+        self.world_time = 0
+
+    def tick(self):
+        while True:
+            self.world_time += 1
+            for person in self.people:
+                person.tick()
+            for queue in self.queues:
+                self.people = queue.tick(self.people, self.queues)
+            for elevator in self.elevators:
+                elevator.tick()
+            sleep(0.5)
+    
+    def add_person(self, person):
+        pass
 
 def main():
-    global world_time, queues, people, elevators
-    world_time = 0
+    floors = [(0, True, 1), (1,), (2, True), (3, False)]
+    elevators = [(2,), (3,)]
     
-    queues = [Queue(x) for x in range(0,6)] # create 6 floors, 0-5
-    people = {Person(x) for x in range(1,6)} # create 5 people on floor 0, each going to a different floor 1-5
-    people.update({Person(3) for x in range(1,6)}) # create 5 more people on floor 0, each going to 3
-    for person in sorted(list(people), key=lambda k: random.random()): # shuffles the set as a list in place
-        queues[person.start].people.append(person) # people join the appropriate queues
-    elevators = [Elevator(3)] # create one 3-person elevator
-    
-    while people:
-        for elevator in elevators:
-            ###
-            # People exit then enter elevators
-            ###
-            old_people = elevator.people
-            elevator.people = {person for person in elevator.people if not person.destination == elevator.level}
-            for person in old_people.difference(elevator.people):
-                person.incinerate()
-            while len(queues[elevator.level].people) != 0:
-                entering = queues[elevator.level].people.pop(0)
-                if not elevator.add_person(entering):
-                    queues[elevator.level].people[0:0] = [entering]
-                    break  
-            ###
-            # Elevators now pick their direction to travel
-            ###
-            if len(elevator.people) != 0:
-                elevator.direction = Direction.up
-            elif len(elevator.people) == 0 and elevator.level != 0:
-                elevator.direction = Direction.down
-            else:
-                elevator.direction = Direction.stationary
-        
-        tick()
-            
+    BuildingModel(floors, elevators)
 
 if __name__ == "__main__":
     main()
