@@ -6,7 +6,6 @@ import random
 class State(IntEnum):
     queuing = 1
     riding = 2
-    exiting = 3
     
 class Direction(IntEnum):
     up = 1
